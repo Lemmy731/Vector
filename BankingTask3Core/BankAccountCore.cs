@@ -11,8 +11,8 @@ namespace BankingTask3Core
     public class BankAccountCore
     {
         private int id = 100;
-        private static string description = "Amount deposited after opening of account";
-        private static string transactionType = "deposit";
+         string description = "Amount deposited after opening of account";
+        string transactionType = AccountType.TransactionType.Deposit.ToString();
 
         /// <summary>
         /// Creates account for customer
@@ -26,13 +26,18 @@ namespace BankingTask3Core
         {
             BankAccount bankAccount = new BankAccount(id, initialBalance, accountType,
                 accountNumber, accountName);
-            Transactions transactions = new Transactions(initialBalance, initialBalance,
-                DateTime.Now.ToString(),description,transactionType,accountNumber);
             Database.accountList.Add(bankAccount);
+            Transactions transactions = new Transactions(initialBalance, initialBalance, description,
+                DateTime.Now.ToString(), transactionType, accountNumber);
             Database.transactionsList.Add(transactions);
             id++;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public string GetAccountType(string name)
         {
             foreach (BankAccount bankAccount in Database.accountList)
@@ -45,6 +50,11 @@ namespace BankingTask3Core
             return "No AccountType for this user";
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public long GetAccountNumberByName(string name)
         {
             foreach (BankAccount bankAccount in Database.accountList)
@@ -56,6 +66,12 @@ namespace BankingTask3Core
             }
             return 0;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="accountNumber"></param>
+        /// <returns></returns>
         public bool CheckAccountNumberIfExists(long accountNumber)
         {
             foreach (BankAccount bankAccount in Database.accountList)
@@ -66,6 +82,96 @@ namespace BankingTask3Core
                 }
             }
             return false;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="transactionType"></param>
+        /// <param name="amount"></param>
+        /// <param name="description"></param>
+        /// <param name="accountNumber"></param>
+        public void MakeWithdraw(string transactionType, decimal amount,
+            string description, long accountNumber)
+        {
+            decimal Balance=0;
+            foreach (var bankAccount in Database.accountList)
+            {
+                if(bankAccount.AccountNumber == accountNumber)
+                {
+                    Balance = bankAccount.Balance - amount;
+                    bankAccount.Balance=Balance;
+                }
+            }
+            Transactions transactions = new Transactions(amount,Balance,description,
+                DateTime.Now.ToString(), transactionType, accountNumber);
+            Database.transactionsList.Add(transactions);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="transactionType"></param>
+        /// <param name="amount"></param>
+        /// <param name="description"></param>
+        /// <param name="accountNumber"></param>
+        public void MakeDeposit(string transactionType, decimal amount,
+            string description, long accountNumber)
+        {
+            decimal Balance = 0;
+            foreach (var bankAccount in Database.accountList)
+            {
+                if (bankAccount.AccountNumber == accountNumber)
+                {
+                    Balance = bankAccount.Balance + amount;
+                    bankAccount.Balance = Balance;
+                }
+            }
+            Transactions transactions = new Transactions(amount, Balance, description,
+                DateTime.Now.ToString(), transactionType, accountNumber);
+            Database.transactionsList.Add(transactions);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="transactionType"></param>
+        /// <param name="amount"></param>
+        /// <param name="description"></param>
+        /// <param name="debitAccountNumber"></param>
+        /// <param name="creditAccountNumber"></param>
+        public void MakeTransfer(string transactionType, decimal amount,
+            string description, long debitAccountNumber, long creditAccountNumber)
+        {
+            decimal Balance = 0;
+            foreach (var bankAccount in Database.accountList)
+            {
+                if (bankAccount.AccountNumber == debitAccountNumber)
+                {
+                    Balance = bankAccount.Balance + amount;
+                    bankAccount.Balance = Balance;
+                }
+            }
+            Transactions transactions = new Transactions(amount, Balance, description,
+                DateTime.Now.ToString(), transactionType, debitAccountNumber);
+            Database.transactionsList.Add(transactions);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="accountNumber"></param>
+        /// <returns></returns>
+        public decimal GetBalance(long accountNumber)
+        {
+            foreach (BankAccount bankAccount in Database.accountList)
+            {
+                if (bankAccount.AccountNumber == accountNumber)
+                {
+                    return bankAccount.Balance;
+                }
+            }
+            return 0;
         }
     }
 }

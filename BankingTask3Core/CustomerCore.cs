@@ -11,6 +11,13 @@ namespace BankingTask3Core
         private const string emptyList = "Empty storage please create account";
         private const string accountFound = "Account found";
         private const string accountNotFound = "Account not found please create account";
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
         public string Login(string email,string password)
         {
             if (Database.customerList == null)
@@ -28,6 +35,14 @@ namespace BankingTask3Core
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fullname"></param>
+        /// <param name="email"></param>
+        /// <param name="password"></param>
+        /// <param name="acctType"></param>
+        /// <param name="phoneNumber"></param>
         public void CustomerRegistration(string fullname, string email, string password,string acctType, string phoneNumber)
         {
 
@@ -38,6 +53,12 @@ namespace BankingTask3Core
             accountNumber++;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
         public string GetName(string email,string password)
         {
             string name = string.Empty;

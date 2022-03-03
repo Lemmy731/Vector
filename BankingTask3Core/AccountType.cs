@@ -2,9 +2,22 @@
 
 namespace BankingTask3Core
 {
-    public enum AccountType
+    /// <summary>
+    /// 
+    /// </summary>
+    public class AccountType
     {
-        Savings= 1000,
-        Current= 0,
+        public enum accountType
+        {
+            Savings = 1000,
+            Current = 0
+        }
+        
+        public enum TransactionType
+        {
+            Deposit,
+            Withdraw,
+            Transfer
+        }
     }
 }

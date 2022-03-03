@@ -1,33 +1,65 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using BankingTask3General;
+using BankingTask3Model;
 
 namespace BankingTask3UI
 {
     public class PrintTable
     {
         static int tableWidth = 100;
-        public PrintTable()
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
+        public void PrintTableForAccountDetails(string name)
         {
             Console.Clear();
             PrintLine();
-            PrintRow("Column 1", "Column 2", "Column 3", "Column 4");
-            PrintLine();
-            PrintRow("", "", "", "");
-            PrintRow("", "", "", "");
+            PrintRow("FULL NAME", "ACCOUNT NUMBER", "ACCOUNT TYPE", "AMOUNT BALANCE");
+            //PrintLine();
+            foreach(BankAccount account in Database.accountList)
+            {
+                PrintLine();
+                if (account.AccountName == name)
+                {
+                    PrintRow(account.AccountName, account.AccountNumber.ToString(), 
+                        account.AccountType, account.Balance.ToString());
+                }
+            }
             PrintLine();
             Console.ReadLine();
-
         }
 
-        static void PrintLine()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="accountNumber"></param>
+        public void PrintTableForAccountStatement(long accountNumber)
+        {
+            Console.Clear();
+            PrintLine();
+            PrintRow("DATE", "DESCRIPTION ", "AMOUNT", "BALANCE");
+            //PrintLine();
+            foreach (Transactions transactions in Database.transactionsList)
+            {
+                PrintLine();
+                if (transactions.AccountNumber == accountNumber)
+                {
+                    PrintRow(transactions.DateTime, transactions.Description,
+                        transactions.Amount.ToString(), transactions.Balance.ToString());
+                }
+            }
+            //PrintLine();
+            Console.ReadLine();
+        }
+
+        private static void PrintLine()
         {
             Console.WriteLine(new string('-', tableWidth));
         }
 
-        static void PrintRow(params string[] columns)
+        private static void PrintRow(params string[] columns)
         {
             int width = (tableWidth - columns.Length) / columns.Length;
             string row = "|";
@@ -40,7 +72,7 @@ namespace BankingTask3UI
             Console.WriteLine(row);
         }
 
-        static string AlignCentre(string text, int width)
+        private static string AlignCentre(string text, int width)
         {
             text = text.Length > width ? text.Substring(0, width - 3) + "..." : text;
 

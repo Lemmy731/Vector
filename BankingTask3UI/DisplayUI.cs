@@ -11,11 +11,14 @@ namespace BankingTask3UI
         CustomerCore customerCore = new CustomerCore();
         BankAccountCore bankAccountCore = new BankAccountCore();
         TransactionCore transactionCore = new TransactionCore();
-        string currentAcctType = AccountType.Current.ToString();
-        string savingsAcctType = AccountType.Savings.ToString();
+        PrintTable printTable = new PrintTable();
+        string currentAcctType = AccountType.accountType.Current.ToString();
+        string savingsAcctType = AccountType.accountType.Savings.ToString();
         string newEmail;
         string newPassword;
         string newPhoneNumber;
+        private const string accountFound = "Account found";
+        private const string accountNotFound = "Account not found please create account";
         const string options = @"Press:
                       1   To Login If you already have an account
                       2   To Create an Account if you do not have an account
@@ -29,6 +32,9 @@ namespace BankingTask3UI
                       6   To Print statement of account
                       7   To Get your account balance
                       8   To Logout";
+        const string confirmOptions = @"Press:
+                      1   To Retry
+                      2   To Create Account";
         public void StartUI()
         {
             Console.WriteLine("");
@@ -49,6 +55,7 @@ namespace BankingTask3UI
                 }
                 else if (inputLine.Equals("2"))
                 {
+                    Console.Clear();
                     CreateAccount();
                 }
                 else if (inputLine.Equals("3"))
@@ -94,7 +101,7 @@ namespace BankingTask3UI
             var check = customerCore.Login(email, password);
             var name = customerCore.GetName(email, password);
             var accountNumber = bankAccountCore.GetAccountNumberByName(name);
-            if (check == "Account found")
+            if (check == accountFound)
             {
                 Console.WriteLine("{0}", check);
                 Console.WriteLine("You are welcome {0}", name);
@@ -103,7 +110,28 @@ namespace BankingTask3UI
             else
             {
                 Console.WriteLine("{0}", check);
+                UserLoginConfirmation();
+            }
+        }
+        private void UserLoginConfirmation()
+        {
+            Console.WriteLine(confirmOptions);
+            Console.Write(">>>>>  ");
+            string inputLine;
+            inputLine = Console.ReadLine().Trim();
+            if (inputLine.Equals("1"))
+            {
+                Console.Clear();
+            }
+            else if (inputLine.Equals("2"))
+            {
+                Console.Clear();
                 CreateAccount();
+            }
+            else
+            {
+                // If the user type something that is not recognised by the program
+                Console.WriteLine("Command not recognised, please enter a valid input as stated above");
             }
         }
         private void CreateAccount()
@@ -115,6 +143,7 @@ namespace BankingTask3UI
             string accountType;
             string phoneNumber;
             decimal depositAmount;
+            bool check;
 
             while (true)
             {
@@ -175,14 +204,14 @@ namespace BankingTask3UI
             {
                 Console.WriteLine("Please specify the Account type(Enter 1 for savings or 2 for current): ");
                 accountType = Console.ReadLine().Trim().ToLower();
-                if (accountType == "2")
-                {
-                    accountType = currentAcctType;
-                    break;
-                }
-                else if (accountType == "1")
+                if (accountType == "1") 
                 {
                     accountType = savingsAcctType;
+                    break;
+                }
+                else if (accountType == "2")
+                {
+                    accountType = currentAcctType;
                     break;
                 }
                 Console.WriteLine("Please input correct format \"1\" or \"2\"");
@@ -191,7 +220,8 @@ namespace BankingTask3UI
             while (true)
             {
                 Console.WriteLine("Fund your account: ");
-                bool check = decimal.TryParse(Console.ReadLine(), out depositAmount);
+                string inputAmount = Console.ReadLine();
+                (check,depositAmount)= validation.CheckAmount(inputAmount);
                 if (check && accountType != currentAcctType && depositAmount < 1000)
                 {
                     Console.WriteLine("You can only deposit 1000 and above");
@@ -221,7 +251,7 @@ namespace BankingTask3UI
             do
             {
                 Console.WriteLine("Your Account Number is {0}", initialAccountNumber);
-                Console.WriteLine("Your Balance is {0}", transactionCore.GetBalance(initialAccountNumber));
+                Console.WriteLine("Your Balance is {0}", bankAccountCore.GetBalance(initialAccountNumber));
                 Console.WriteLine(DashboardOptions);
                 Console.Write(">>>>>  ");
                 input = Console.ReadLine().Trim();
@@ -251,11 +281,11 @@ namespace BankingTask3UI
                 }
                 else if (input.Equals("7"))
                 {
-                    transactionCore.GetBalance(initialAccountNumber);
+                    GetBalanceOfAccount();
                 }
                 else if (input.Equals("8"))
                 {
-                    Environment.Exit(0);
+                    StartUI();
                 }
                 else
                 {
@@ -265,27 +295,55 @@ namespace BankingTask3UI
             } while (!input.Equals("") && !input.Equals("exit"));
         }
 
-        private void DepositMethod()
+        private void GetBalanceOfAccount()
         {
-            decimal depositAmount;
-            string description;
             long accountNumber;
+            bool confirm;
             while (true)
             {
                 Console.WriteLine("Enter valid Account Number  :");
-                bool confirm = long.TryParse(Console.ReadLine(), out accountNumber);
+                string checkAccountNumber = Console.ReadLine();
+                (confirm,accountNumber) = validation.CheckAccountNumber(checkAccountNumber);
                 if (confirm)
                 {
                     break;
                 }
                 Console.WriteLine("Account number should be in 10 digit numbers");
             }
-            if (bankAccountCore.CheckAccountNumberIfExists(accountNumber))
+
+            bankAccountCore.GetBalance(accountNumber);
+        }
+
+        private void DepositMethod()
+        {
+            decimal depositAmount;
+            string description;
+            bool confirm;
+            bool checker;
+            long accountNumber;
+            while (true)
+            {
+                Console.WriteLine("Enter valid Account Number  :");
+                string checkAccountNumber = Console.ReadLine();
+                (confirm, accountNumber) = validation.CheckAccountNumber(checkAccountNumber);
+                if (confirm)
+                {
+                    break;
+                }
+                Console.WriteLine("Account number should be in 10 digit numbers");
+            }
+            if (!bankAccountCore.CheckAccountNumberIfExists(accountNumber))
+            {
+                Console.WriteLine("This Account Number is Not Found please re-enter your account number");
+                DepositMethod();
+            }
+            else
             {
                 while (true)
                 {
                     Console.WriteLine("How much would you like to deposit?: ");
-                    bool checker = decimal.TryParse(Console.ReadLine(), out depositAmount);
+                    string inputAmount = Console.ReadLine();
+                    (checker, depositAmount) = validation.CheckAmount(inputAmount);
                     if (checker)
                     {
                         break;
@@ -294,7 +352,7 @@ namespace BankingTask3UI
                 }
                 Console.WriteLine("Enter the reason for deposit");
                 description = Console.ReadLine();
-                transactionCore.MakeDeposit("deposit", depositAmount, description, accountNumber);
+                bankAccountCore.MakeDeposit("deposit", depositAmount, description, accountNumber);
             }
         }
 
@@ -303,17 +361,20 @@ namespace BankingTask3UI
             decimal withdrawAmount;
             string description;
             long accountNumber;
+            bool confirm;
+            bool checker;
             while (true)
             {
                 Console.WriteLine("Enter valid Account Number  :");
-                bool confirm = long.TryParse(Console.ReadLine(), out accountNumber);
+                string checkAccountNumber = Console.ReadLine();
+                (confirm, accountNumber) = validation.CheckAccountNumber(checkAccountNumber);
                 if (confirm)
                 {
                     break;
                 }
                 Console.WriteLine("Account number should be in 10 digit numbers");
             }
-            decimal balance = transactionCore.GetBalance(accountNumber);
+            decimal balance = bankAccountCore.GetBalance(accountNumber);
             Console.WriteLine("Available Balance: {0}", balance);
             string accountType = bankAccountCore.GetAccountType(name);
             if (balance == 1000 && accountType == "Savings")
@@ -326,7 +387,8 @@ namespace BankingTask3UI
                 while (true)
                 {
                     Console.WriteLine("How much would you like to withdraw?: ");
-                    bool checker = decimal.TryParse(Console.ReadLine(), out withdrawAmount);
+                    string inputAmount = Console.ReadLine();
+                    (checker, withdrawAmount) = validation.CheckAmount(inputAmount);
                     if (checker)
                     {
                         break;
@@ -335,7 +397,7 @@ namespace BankingTask3UI
                 }
                 Console.WriteLine("Enter the reason for withdraw");
                 description = Console.ReadLine();
-                transactionCore.MakeWithdraw("Withdrawal", withdrawAmount, description, accountNumber);
+                bankAccountCore.MakeWithdraw("Withdrawal", withdrawAmount, description, accountNumber);
             }
         }
 
@@ -355,7 +417,7 @@ namespace BankingTask3UI
                 }
                 Console.WriteLine("Account number should be in 10 digit numbers");
             }
-            decimal balance = transactionCore.GetBalance(debitAccountNumber);
+            decimal balance = bankAccountCore.GetBalance(debitAccountNumber);
             Console.WriteLine("Available Balance: {0}", balance);
             string accountType = bankAccountCore.GetAccountType(name);
             if (balance == 1000 && accountType == "Savings")
@@ -387,7 +449,7 @@ namespace BankingTask3UI
                 }
                 Console.WriteLine("Enter the reason for withdraw");
                 description = Console.ReadLine();
-                transactionCore.MakeTransfer("Transfer", transferAmount, description, debitAccountNumber, creditAccountNumber);
+                bankAccountCore.MakeTransfer("Transfer", transferAmount, description, debitAccountNumber, creditAccountNumber);
             }
         }
 
@@ -434,12 +496,23 @@ namespace BankingTask3UI
 
         private void PrintAccountDetails(string name)
         {
-
+            printTable.PrintTableForAccountDetails(name);
         }
 
         private void PrintAccountStatement()
         {
-
+            long accountNumber;
+            while (true)
+            {
+                Console.WriteLine("Enter valid Debit Account Number :");
+                bool confirm = long.TryParse(Console.ReadLine(), out accountNumber);
+                if (confirm)
+                {
+                    break;
+                }
+                Console.WriteLine("Account number should be in 10 digit numbers");
+            }
+            printTable.PrintTableForAccountStatement(accountNumber);
         }
 
     }

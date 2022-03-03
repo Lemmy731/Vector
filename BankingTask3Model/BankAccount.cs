@@ -5,7 +5,7 @@ namespace BankingTask3Model
     public class BankAccount
     {
         public int Id { get; set; }
-        public decimal InitialBalance { get; set; }
+        public decimal Balance { get; set; }
         public long AccountNumber { get; set; }
         public string AccountName { get; set; }
         public string AccountType { get; set; }  
@@ -14,7 +14,7 @@ namespace BankingTask3Model
             string accountName)
         {
             Id = id;
-            InitialBalance = initialBalance;
+            Balance = initialBalance;
             AccountType = acctType;
             AccountNumber = accountNumber;
             AccountName = accountName;
