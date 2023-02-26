@@ -11,6 +11,15 @@ namespace BankingTask3Model
         public string DateTime { get; set; }
         public string TransactionType { get; set; } 
 
+        /// <summary>
+        /// This constructor is use to collect the following
+        /// </summary>
+        /// <param name="amount"></param>
+        /// <param name="balance"></param>
+        /// <param name="description"></param>
+        /// <param name="dateTime"></param>
+        /// <param name="transactionType"></param>
+        /// <param name="accountNumber"></param>
         public Transactions(decimal amount,decimal balance,string description,
             string dateTime,string transactionType,long accountNumber)
         {

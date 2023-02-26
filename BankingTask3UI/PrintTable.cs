@@ -40,7 +40,6 @@ namespace BankingTask3UI
             Console.Clear();
             PrintLine();
             PrintRow("DATE", "DESCRIPTION ", "AMOUNT", "BALANCE");
-            //PrintLine();
             foreach (Transactions transactions in Database.transactionsList)
             {
                 PrintLine();
@@ -50,7 +49,7 @@ namespace BankingTask3UI
                         transactions.Amount.ToString(), transactions.Balance.ToString());
                 }
             }
-            //PrintLine();
+            PrintLine();
             Console.ReadLine();
         }
 

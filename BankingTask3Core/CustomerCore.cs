@@ -8,35 +8,32 @@ namespace BankingTask3Core
         Customer customerInput;
         private int id = 001;
         public long accountNumber = 1211010120;
-        private const string emptyList = "Empty storage please create account";
-        private const string accountFound = "Account found";
-        private const string accountNotFound = "Account not found please create account";
 
         /// <summary>
-        /// 
+        /// This method is use to confirm if the user email and password is in the storage
         /// </summary>
         /// <param name="email"></param>
         /// <param name="password"></param>
         /// <returns></returns>
-        public string Login(string email,string password)
+        public bool Login(string email,string password)
         {
             if (Database.customerList == null)
-                return emptyList;
+                return false;
             else
             {
                 var verify=Database.customerList.Exists(
                     user => user.Email == email && user.PassWord == password);
                 if (verify)
                 {
-                    return accountFound;
+                    return true;
                 }
                 else
-                    return accountNotFound;
+                    return false;
             }
         }
 
         /// <summary>
-        /// 
+        /// This method is use to create a new user
         /// </summary>
         /// <param name="fullname"></param>
         /// <param name="email"></param>
@@ -54,7 +51,7 @@ namespace BankingTask3Core
         }
 
         /// <summary>
-        /// 
+        /// This method is use to get user name using email and password
         /// </summary>
         /// <param name="email"></param>
         /// <param name="password"></param>

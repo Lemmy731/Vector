@@ -7,7 +7,7 @@ namespace BankingTask3General
     {
         private string NameRegex = @"^[A-Z]{1}[A-Za-z]{2,}$";
         private string PhoneRegex = @"^[0-9]{11}$";
-        private string PasswordRegex = @"^[a-zA-Z]{3,}[@#$%^&!]{1}[0-9]{2,}$";
+        private string PasswordRegex = @"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$";
         private string EmailRegex = @"^[A-Za-z0-9]+[.+-_]{0,1}[A-Za-z0-9]+[@][a-zA-Z]+[.][a-zA-Z]{2,3}$";
 
         /// <summary>
@@ -25,9 +25,10 @@ namespace BankingTask3General
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public bool CheckPasswordInput(string name)
+        public bool CheckPasswordInput(string password)
         {
-            return Regex.IsMatch(name, PasswordRegex);
+            bool ret =  Regex.IsMatch(password, PasswordRegex);
+            return ret; 
         }
 
         /// <summary>

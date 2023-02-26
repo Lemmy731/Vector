@@ -10,15 +10,13 @@ namespace BankingTask3UI
         readonly Validation validation = new Validation();
         CustomerCore customerCore = new CustomerCore();
         BankAccountCore bankAccountCore = new BankAccountCore();
-        TransactionCore transactionCore = new TransactionCore();
+        //TransactionCore transactionCore = new TransactionCore();
         PrintTable printTable = new PrintTable();
         string currentAcctType = AccountType.accountType.Current.ToString();
         string savingsAcctType = AccountType.accountType.Savings.ToString();
         string newEmail;
         string newPassword;
         string newPhoneNumber;
-        private const string accountFound = "Account found";
-        private const string accountNotFound = "Account not found please create account";
         const string options = @"Press:
                       1   To Login If you already have an account
                       2   To Create an Account if you do not have an account
@@ -39,8 +37,8 @@ namespace BankingTask3UI
         {
             Console.WriteLine("");
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("\t\t********Welcome to Banking Console App*********");
-            Console.WriteLine("\t\t-------------------------------------------------");
+            Console.WriteLine("\t\t\t********Welcome to Banking Console App*********");
+            Console.WriteLine("\t\t------------------------------------------------------------");
             Console.ResetColor();
             string inputLine;
             do
@@ -101,9 +99,8 @@ namespace BankingTask3UI
             var check = customerCore.Login(email, password);
             var name = customerCore.GetName(email, password);
             var accountNumber = bankAccountCore.GetAccountNumberByName(name);
-            if (check == accountFound)
+            if (check)
             {
-                Console.WriteLine("{0}", check);
                 Console.WriteLine("You are welcome {0}", name);
                 Dashboard(accountNumber, name);
             }
@@ -122,6 +119,7 @@ namespace BankingTask3UI
             if (inputLine.Equals("1"))
             {
                 Console.Clear();
+                LoginInput();
             }
             else if (inputLine.Equals("2"))
             {

@@ -15,7 +15,7 @@ namespace BankingTask3Core
         string transactionType = AccountType.TransactionType.Deposit.ToString();
 
         /// <summary>
-        /// Creates account for customer
+        /// This method is use to create user account
         /// </summary>
         /// <param name="accountName"></param> 
         /// <param name="initialBalance"></param>
@@ -34,7 +34,7 @@ namespace BankingTask3Core
         }
 
         /// <summary>
-        /// 
+        /// This method is use to get the account type
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
@@ -51,7 +51,7 @@ namespace BankingTask3Core
         }
 
         /// <summary>
-        /// 
+        /// This method is use to get the account number of a particular user using the user name
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
@@ -68,7 +68,7 @@ namespace BankingTask3Core
         }
 
         /// <summary>
-        /// 
+        /// This method is use to confirm if the account number exists
         /// </summary>
         /// <param name="accountNumber"></param>
         /// <returns></returns>
@@ -85,7 +85,7 @@ namespace BankingTask3Core
         }
 
         /// <summary>
-        /// 
+        /// This method is use to make withdraw from a particular user
         /// </summary>
         /// <param name="transactionType"></param>
         /// <param name="amount"></param>
@@ -109,7 +109,7 @@ namespace BankingTask3Core
         }
 
         /// <summary>
-        /// 
+        /// This method is use to make deposit from a particular user
         /// </summary>
         /// <param name="transactionType"></param>
         /// <param name="amount"></param>
@@ -133,7 +133,7 @@ namespace BankingTask3Core
         }
 
         /// <summary>
-        /// 
+        /// This method is use to make transfer from a particular user to another particular user
         /// </summary>
         /// <param name="transactionType"></param>
         /// <param name="amount"></param>
@@ -155,10 +155,21 @@ namespace BankingTask3Core
             Transactions transactions = new Transactions(amount, Balance, description,
                 DateTime.Now.ToString(), transactionType, debitAccountNumber);
             Database.transactionsList.Add(transactions);
+            foreach (var bankAccount in Database.accountList)
+            {
+                if (bankAccount.AccountNumber == creditAccountNumber)
+                {
+                    Balance = bankAccount.Balance + amount;
+                    bankAccount.Balance = Balance;
+                }
+            }
+            Transactions creditTransactions = new Transactions(amount, Balance, description,
+                DateTime.Now.ToString(), transactionType, creditAccountNumber);
+            Database.transactionsList.Add(creditTransactions);
         }
 
         /// <summary>
-        /// 
+        /// This method is use to get the balance of a particular user.
         /// </summary>
         /// <param name="accountNumber"></param>
         /// <returns></returns>

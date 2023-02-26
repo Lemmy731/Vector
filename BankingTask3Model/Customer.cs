@@ -16,7 +16,7 @@ namespace BankingTask3Model
         public string PhoneNumber { get; set; }
 
         /// <summary>
-        /// The constructor to collect values
+        /// This constructor is use to collect the following
         /// </summary>
         /// <param name="fullname"></param>
         /// <param name="email"></param>
